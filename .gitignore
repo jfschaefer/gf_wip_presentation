@@ -1,0 +1,21 @@
+# vim swap files
+*.swp
+
+# visualized trees
+gf/*.png
+gf/*.pdf
+gf/*.dot
+
+# temporary gf files
+gf/*.gfo
+
+# latex stuff
+slides.aux
+slides.bbl
+slides.blg
+slides.log
+slides.nav
+slides.out
+slides.snm
+slides.toc
+slides.vrb
