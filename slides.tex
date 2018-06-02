@@ -13,13 +13,13 @@
     morecomment=[l]{--},
     morecomment=[s]{\{-}{-\}},
     morestring=[b]",
-    basicstyle=\footnotesize
+    basicstyle=\footnotesize\rmfamily
 }
 
 \lstdefinelanguage{GFcmd}{
     morekeywords={parse, linearize, view_tree},
     morestring=[b]",
-    basicstyle=\footnotesize
+    basicstyle=\footnotesize\rmfamily
 }
 
 \title{Using GF for Math Linguistics}   
@@ -115,7 +115,7 @@ John loves Mary and John loves John
     \lstinputlisting[language=GF]{gf/TwoEng.gf}
 
     \vspace{1em}
-    The resource grammar takes care of that for us:
+    The resource grammar takes care of the endings for us:
     % We can use the resource grammar to avoid dealing with grammatical subtleties ourselves.
 \begin{lstlisting}[language=GFcmd, breaklines=true]
 > linearize Loves Mary John
@@ -153,6 +153,9 @@ param
 
 \begin{frame}[fragile]
     \frametitle{Operations}
+    \lstinline[language=GF]{UsePN : PN -> NP} is a function (node).
+
+    Below are its linearization and an operation \lstinline[language=GF]{mkNP} that effectively converts a \lstinline[language=GF]{PN} into an \lstinline[language=GF]{NP}.
 \begin{lstlisting}[language=GF, breaklines=true]
 lin
     UsePN pn = {s = \\c => pn.s ! npcase2case c ; a = agrgP3 Sg pn.g} ; 
@@ -163,7 +166,91 @@ oper
 \end{lstlisting}
 \end{frame}
 
+\section{My Research}
+\begin{frame}
+    \frametitle{Using GF for Math Linguistics}
+    Challenges:
+
+    \begin{itemize}
+        \item Parsing formulas
+        \item Grammatical functions of formulas in a sentence
+            \begin{itemize}
+                \item \emph{if $n > 1$}
+                \item \emph{if $n + k$ is even}
+            \end{itemize}
+        \item Other idiosyncracies in mathematical language not covered by the resource grammar, like
+            \begin{itemize}
+                \item \emph{an integer $n$}
+                \item \emph{let $n$ be a\ldots}
+                \item \emph{an integer is called prime iff\ldots}
+            \end{itemize}
+        \item Finding the right grammar (syntactic vs semantic)
+    \end{itemize}
+\end{frame}
 
 
+\begin{frame}[fragile]
+    \frametitle{Formulas}
+    \begin{itemize}
+        \item Representation based on presentation MathML:
+
+            \emph{\$ mrow( mn( 1 ) mo( $<$ ) mi( m ) mo( $<$ ) mi( n ) ) \$}
+    %\emph{a positive integer \$ mi( n ) \$ is called prime iff there is no integer \$ mrow( mn( 1 ) mo( < ) mi( m ) mo( < ) mi( n ) ) \$ such that \$ mrow( mi( m ) mo( | ) mi( n ) ) \$}
+
+        \item Example parsing rule:
+    
+\begin{lstlisting}[language=GF, breaklines=true]
+apply_bin_rel : FBinRelation -> FExpression -> FExpression -> FStatement;
+\end{lstlisting}
+
+\begin{lstlisting}[language=GF, breaklines=true]
+apply_bin_rel rel a b = wrap_mml "mrow" (a ++ (wrap_mml "mo" rel) ++ b);
+\end{lstlisting}
+        \item A lexicon is used for identifiers, operators etc. Example entry:
+
+\begin{lstlisting}[language=GF, breaklines=true]
+lessThan_FBinRelation : FBinRelation;
+\end{lstlisting}
+
+\begin{lstlisting}[language=GF, breaklines=true]
+lessThan_FBinRelation = "<";
+\end{lstlisting}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Category for Math Objects: \lstinline[language=GF]{MObj}}
+    Consider the following three examples:
+    \begin{itemize}
+        \item \emph{There is a bijective map $f$ from $(0, 1)$ to $\mathbb{R}$}
+        \item \emph{There is a bijective map from $(0, 1)$ to $\mathbb{R}$}
+        \item \emph{Let $f$ be a bijective map from $(0, 1)$ to $\mathbb{R}$}
+    \end{itemize}
+
+    A \lstinline[language=GF]{MObj} only represents the object, i.e. \emph{bijective map from $(0, 1)$ to $\mathbb{R}$}
+
+    An identifier can optionally be inserted at a higher level.
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{\lstinline[language=GF]{MObj} example}
+    \vspace{1em}
+\begin{lstlisting}[language=GF, breaklines=true]
+exists_statement : MObj -> Identifier -> Statement;
+\end{lstlisting}
+
+    \vspace{1em}
+    This rule is used in the following statements:
+
+    \vspace{1em}
+\begin{lstlisting}[language=GFcmd, breaklines=true]
+parse -cat=Statement "there is an integer" | view_tree
+\end{lstlisting}
+    \includegraphics[scale=0.3]{exists_noid.png}
+\begin{lstlisting}[language=GFcmd, breaklines=true]
+parse -cat=Statement "there is an integer $ mi( n ) $" | view_tree
+\end{lstlisting}
+    \includegraphics[scale=0.3]{exists_n.png}
+\end{frame}
 
 \end{document}
