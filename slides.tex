@@ -43,13 +43,17 @@
     \end{itemize}
 }
 
+\section{Introductory Examples}
+
 \frame{
     \frametitle{First Example - Abstract Grammar}
 
     \lstinputlisting[language=GF]{gf/One.gf}
 
-    \vspace{2em}
+    \vspace{1em}
     Example tree: \lstinline[language=GFcmd]{And (Loves John Mary) (Loves John John)}
+
+    \includegraphics[scale=0.3]{graph_1.png}
 }
 
 \begin{frame}[fragile]
@@ -90,6 +94,76 @@ And (Loves John Mary) (Loves John John)
 John loves Mary and John loves John
 \end{lstlisting}
 \end{frame}
+
+\section{The Resource Grammar}
+
+\begin{frame}[fragile]
+    \frametitle{Using the Resource Grammar - Abstract Grammar}
+
+    \lstinputlisting[language=GF]{gf/Two.gf}
+
+    \vspace{2em}
+    Challenge: \lstinline[language=GFcmd]{Loves (And_I John Mary) John}
+    
+    \vspace{1em}
+    \emph{$\leadsto$ The ending of the verb depends on the subject}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Using the Resource Grammar - Concrete English Grammar}
+
+    \lstinputlisting[language=GF]{gf/TwoEng.gf}
+
+    \vspace{1em}
+    The resource grammar takes care of that for us:
+    % We can use the resource grammar to avoid dealing with grammatical subtleties ourselves.
+\begin{lstlisting}[language=GFcmd, breaklines=true]
+> linearize Loves Mary John
+Mary loves John
+
+> linearize Loves (And_I John Mary) John
+John and Mary love John
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Using the Resource Grammar - Semantic vs Syntactic}
+    \begin{minipage}{0.31\textwidth}
+        \includegraphics[width=1.1\textwidth]{jlm_sem.png}
+    \end{minipage}
+    \begin{minipage}{0.64\textwidth}
+        \includegraphics[width=1.1\textwidth]{jlm_syn.png}
+    \end{minipage}
+
+
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Record Types}
+\begin{lstlisting}[language=GF, breaklines=true]
+lincat
+    NP = {s : NPCase => Str ; a : Agr} ;
+
+param
+    Number = Sg | Pl ;
+    Gender = Neutr | Masc | Fem ;
+    Agr = AgP1 Number | AgP2 Number | AgP3Sg Gender | AgP3Pl Gender ;
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Operations}
+\begin{lstlisting}[language=GF, breaklines=true]
+lin
+    UsePN pn = {s = \\c => pn.s ! npcase2case c ; a = agrgP3 Sg pn.g} ; 
+
+oper
+    mkNP : PN -> NP = UsePN;
+         -- eta reduction of \pn -> UsePN pn
+\end{lstlisting}
+\end{frame}
+
+
 
 
 \end{document}
