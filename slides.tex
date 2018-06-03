@@ -197,7 +197,7 @@ oper
             \emph{\$ mrow( mn( 1 ) mo( $<$ ) mi( m ) mo( $<$ ) mi( n ) ) \$}
     %\emph{a positive integer \$ mi( n ) \$ is called prime iff there is no integer \$ mrow( mn( 1 ) mo( < ) mi( m ) mo( < ) mi( n ) ) \$ such that \$ mrow( mi( m ) mo( | ) mi( n ) ) \$}
 
-        \item Example parsing rule:
+        \item Example parsing rule for $a < b$:
     
 \begin{lstlisting}[language=GF, breaklines=true]
 apply_bin_rel : FBinRelation -> FExpression -> FExpression -> FStatement;
@@ -227,13 +227,14 @@ lessThan_FBinRelation = "<";
         \item \emph{Let $f$ be a bijective map from $(0, 1)$ to $\mathbb{R}$}
     \end{itemize}
 
+    \vspace{1em}
     A \lstinline[language=GF]{MObj} only represents the object, i.e. \emph{bijective map from $(0, 1)$ to $\mathbb{R}$}
 
     An identifier can optionally be inserted at a higher level.
 \end{frame}
 
 \begin{frame}[fragile]
-    \frametitle{\lstinline[language=GF]{MObj} example}
+    \frametitle{\lstinline[language=GF]{MObj} Example}
     \vspace{1em}
 \begin{lstlisting}[language=GF, breaklines=true]
 exists_statement : MObj -> Identifier -> Statement;
@@ -253,4 +254,28 @@ parse -cat=Statement "there is an integer $ mi( n ) $" | view_tree
     \includegraphics[scale=0.3]{exists_n.png}
 \end{frame}
 
+
+\begin{frame}[fragile]
+    \frametitle{Definition Example}
+
+    \begin{lstlisting}[language=GF, breaklines=true]
+parse "an integer $ mi( n ) $ is called even iff $ mrow( mn( 2 ) mo( | ) mi( n ) ) $" | view_tree
+    \end{lstlisting}
+    \includegraphics[scale=0.3]{even_def.png}
+\end{frame}
+
+\section{TODO}
+\begin{frame}[fragile]
+    \frametitle{TODO}
+    \begin{itemize}
+        \item Use MMT GF Bridge
+        \item Lexicon Generation
+            \begin{itemize}
+                \item From SMGloM
+                \item From arXMLiv with unsupervised/semisupervised methods (already done some work here)
+            \end{itemize}
+        \item More work on grammars
+        \item More languages
+    \end{itemize}
+\end{frame}
 \end{document}
